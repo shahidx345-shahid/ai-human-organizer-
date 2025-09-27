@@ -12,8 +12,24 @@ const app = express();
 
 // Middleware
 app.use(helmet());
+// CORS configuration for development and production
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? [
+      'https://ai-human-organizer.vercel.app',
+      'https://ai-human-organizer-git-main-shahidx345-shahid.vercel.app',
+      'https://ai-human-organizer-shahidx345-shahid.vercel.app'
+    ]
+  : [
+      'http://localhost:3002', 
+      'http://localhost:3003', 
+      'http://localhost:3004', 
+      'http://127.0.0.1:3002', 
+      'http://127.0.0.1:3003', 
+      'http://127.0.0.1:3004'
+    ];
+
 app.use(cors({
-  origin: ['http://localhost:3002', 'http://localhost:3003', 'http://localhost:3004', 'http://127.0.0.1:3002', 'http://127.0.0.1:3003', 'http://127.0.0.1:3004'],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
@@ -216,7 +232,12 @@ app.post('/api/upload/multiple', upload.array('images', 10), (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-});
+// For Vercel deployment
+if (process.env.NODE_ENV === 'production') {
+  module.exports = app;
+} else {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  });
+}

@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 
+// API base URL for different environments
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://ai-human-organizer-backend.vercel.app'
+  : 'http://localhost:3001';
+
 const useProjectStore = create((set, get) => ({
   projects: [],
   loading: false,
@@ -8,7 +13,7 @@ const useProjectStore = create((set, get) => ({
   fetchProjects: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch('http://localhost:3001/api/projects');
+      const response = await fetch(`${API_BASE_URL}/api/projects`);
       if (!response.ok) {
         throw new Error('Failed to fetch projects');
       }
@@ -23,7 +28,7 @@ const useProjectStore = create((set, get) => ({
   createProject: async (projectData) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch('http://localhost:3001/api/projects', {
+      const response = await fetch(`${API_BASE_URL}/api/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +54,7 @@ const useProjectStore = create((set, get) => ({
   updateProject: async (projectId, updates) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${projectId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +82,7 @@ const useProjectStore = create((set, get) => ({
   deleteProject: async (projectId) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${projectId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
